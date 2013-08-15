@@ -1,18 +1,22 @@
 #!/usr/bin/env python
 
 import web
+import hashlib
 
 urls = (
 	'/', 'index'
 )
 
-app = web.application(urls, globals())
+web.config.debug = True
+
+def checkauth():
+	
+app.add_processor(web.loadhook(checkauth))
 
 class index:
-	def GET(self, name):
-		if not name:
-			name = 'World'
-		return 'Hello, ' + name
+	def GET(self):
+		return "hello world"
 
-if __name__ = "__main__":
+if __name__ == "__main__":
+	app = web.application(urls, globals())
 	app.run()
