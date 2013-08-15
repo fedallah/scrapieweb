@@ -6,24 +6,18 @@ import hashlib
 
 sha2 = hashlib.sha256()
 
-db = web.database(dbn='postgres', db='scrapieweb', user='postgres', pw='fuddruckers')
+# db = web.database(dbn='postgres', db='scrapieweb', user='postgres', pw='fuddruckers')
 
 # def uservalidate(username):
 #	usernum = db.query("SELECT COUNT(*) FROM auth WHERE username=$uid", vars="username")	
 #	return usernum[0]
 	
-def cookievalidate(ck):
-	try:
-		return web.cookies().ck
-	except:
-		return 0
-	
 urls = (
-	'/(.*)', 'index'
+	'/', 'index'
 	'/checkauth', 'CheckAuth'
 )
 
-passval = web.form.regexp(r".{25,60}", 'must be between 25 and 60 characters')
+# passval = web.form.regexp(r".{25,60}", 'must be between 25 and 60 characters')
 
 # login_form = web.form.Form(
 #	web.form.Textbox("username", description="Username"),
@@ -37,9 +31,6 @@ passval = web.form.regexp(r".{25,60}", 'must be between 25 and 60 characters')
 app = web.application(urls, globals())
 
 web.config.debug = True
-
-if __name__ == "__main__":
-    app.run()
 
 class CheckAuth:
 	def GET(self):
@@ -61,5 +52,12 @@ class CheckAuth:
 				else:
 					return "authorized"
 class index:
-	def GET(self):
-		return "hello world"
+	def GET(self, testvar):
+		if not testvar:
+			testvar = 'Bob'
+		return 'hello, ' + testvar
+
+
+if __name__ == "__main__":
+	app.run()
+
