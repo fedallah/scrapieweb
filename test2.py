@@ -2,6 +2,11 @@
 
 import web
 import hashlib
+import time
+
+mkhash = hashlib.sha512
+
+app = web.application(urls, globals())
 
 urls = (
 	'/', 'index'
@@ -9,15 +14,20 @@ urls = (
 
 web.config.debug = True
 
-def checkauth():
-	mip = web.cookies(ipaddr=web.ctx.ip)
-	mip.ipaddr
+def checkauth(cahandle):
+	mkhash.update(web.ctx.ip + time.clock() + random.random())
+	uniqid = mkhash.hexdigest()
+	
 
 class index:
 	def GET(self):
 		return "hello world"
 
-#if __name__ == "__main__":
-app = web.application(urls, globals())
+class noauth:
+	def GET(self):
+		return "not authorized"
+
 app.add_processor(web.loadhook(checkauth))
-app.run()
+
+if __name__ == "__main__":
+	app.run()
