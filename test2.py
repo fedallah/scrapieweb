@@ -2,32 +2,40 @@
 
 import web
 import hashlib
+import random
 import time
-
-mkhash = hashlib.sha512
-
-app = web.application(urls, globals())
 
 urls = (
 	'/', 'index'
 )
 
+app = web.application(urls, globals())
+
 web.config.debug = True
 
-def checkauth(cahandle):
-	mkhash.update(web.ctx.ip + time.clock() + random.random())
-	uniqid = mkhash.hexdigest()
-	
+def uniqidgen(ilist):
+	sha512h = hashlib.new('sha512')
+        "function accepts a list; generates a SHA512 hash based on input from list (64char hex output)"
+	for i in ilist:
+		sha512h.update(i)
+	return sha512h.hexdigest()
 
+def ckauth_proc():
+	try:
+		uid = web.cookies().get(userVal)
+	except:
+		keys = [ web.ctx.ip, time.clock(), random.random() ]
+		uid = uniqidgen(keys)
+		web.setcookie('userVal', uid, 3600)
+	
 class index:
 	def GET(self):
-		return "hello world"
+		userid = web.cookies().get(userVal)
+		if not userid:
+			userid = "notfound"
+		return "hello world" + userid
 
-class noauth:
-	def GET(self):
-		return "not authorized"
-
-app.add_processor(web.loadhook(checkauth))
+app.add_processor(web.loadhook(ckauth_proc))
 
 if __name__ == "__main__":
 	app.run()
