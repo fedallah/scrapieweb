@@ -17,23 +17,20 @@ def uniqidgen(ilist):
 	sha512h = hashlib.new('sha512')
         "function accepts a list; generates a SHA512 hash based on input from list (64char hex output)"
 	for i in ilist:
-		sha512h.update(i)
+		sha512h.update(str(i))
 	return sha512h.hexdigest()
 
 def ckauth_proc():
-	try:
-		uid = web.cookies().get(userVal)
-	except:
+	uid = web.cookies().get('userVal')
+	if not uid:
 		keys = [ web.ctx.ip, time.clock(), random.random() ]
 		uid = uniqidgen(keys)
-		web.setcookie('userVal', uid, 3600)
+		web.setcookie('userVal', uid, 7200)
 	
 class index:
 	def GET(self):
-		userid = web.cookies().get(userVal)
-		if not userid:
-			userid = "notfound"
-		return "hello world" + userid
+		userid = web.cookies().get('userVal')
+		return "hello, " + userid
 
 app.add_processor(web.loadhook(ckauth_proc))
 
