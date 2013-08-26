@@ -32,6 +32,25 @@ class index:
 		userid = web.cookies().get('userVal')
 		return "hello, " + userid
 
+class target:
+	def __init__(self):
+	def verify:
+	def scrape:
+	def remove:
+	
+class file:
+	def __init__(self):
+	def verify:
+	def update:
+
+class filetype:
+	def add:
+	def remove:
+		
+class fetchall_page:
+	def GET(self):
+	
+
 app.add_processor(web.loadhook(ckauth_proc))
 
 if __name__ == "__main__":
