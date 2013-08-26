@@ -31,6 +31,11 @@ class index:
 	def GET(self):
 		userid = web.cookies().get('userVal')
 		return "hello, " + userid
+		
+class login:
+	def GET(self):
+		userid = web.cookies().get('userval')
+		
 
 class target:
 	def __init__(self):
