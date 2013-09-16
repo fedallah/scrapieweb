@@ -1,0 +1,35 @@
+master	|			||	filesystem
+	|	worker		||	filesystem
+master	|	worker		||	filesystem
+	|	worker		||	filesystem
+master	|			||	filesystem
+
+
+workers queue jobs from authenticated masters, perform scans on filesystems
+raw scans are local to worker nodes (sqlite)
+masters are using postgresql; they use this for job queueing and management as well as tracking of generated output
+
+scheduling is baked in (of course)
+
+starting a job:
+
+		|	worker		|
+user > master > |	worker		|	filesystem(s)
+		|	worker		|
+
+user must authenticate to master - standard web interface.
+master must be authenticated to worker and vice versa - verification of identity and authentication between the two.
+master will then pass users's credentials to the worker(s).  The worker(s) will attempt to connect to the targeted filesystem(s) with
+the user's credentials, reporting success or failure.
+
+The worker will run a scan of the filesystem and/or deliver aggregated data to the master (either from this scan or from a previous one)
+
+no data is stored on the worker after the time of analysis.  That data is just a sqlite dump - it is compressed and sent over the wire
+back to the master, where it is kept either on the master or downloaded by the user to local disk, etc.  at no time does the worker
+store data itself.
+
+This is a simple HTTP download...
+
+if a master wants to run a job on old data it can hand the sqlite dump(s) back to any worker nodes.  The workers are almost completely stateless.
+
+Except for the compressed sqlite files, everything here is kicked around as a JSON object.
