@@ -2,6 +2,7 @@
 
 import web
 import hashlib
+import json
 import random
 import time
 import re
@@ -58,12 +59,27 @@ def ishuman():
 	mq = web.ctx.query
 	if "human" in mq.lower():
 		web.header('Content-type', "text/html; charset=utf-8")
+	else:
+		web.header('Content-type', "application/json; charset=utf-8")
 		
+def islocked():
+	if gmrval == 1:
+		rval = controlconnect()
+	else:
+		try:
+			queued = controldb.query("SELECT COUNT FROM jobs")
+		except:
+			rval = 1
+	if rval > 0:
+		global gmrval = rval
+		raise web.seeother('/err')
+	else:
+		global gmrval = 0				
+	
 
 # what is the status of the worker?  is it busy?  what is it doing?
 class status:
-	mq = web.ctx.query
-	if "human" in mq.lower():
+	
 
 class error:
 	def GET(self):
@@ -74,6 +90,8 @@ class error:
 		return gmrval
 	
 class job_cancel:
+
+class 
 	
 app.add_processor(web.loadhook(hasmaster))
 app.add_processor(ishuman)
